@@ -17,3 +17,9 @@ To connect to machine, use:
 ```shell
 vagrant ssh
 ```
+
+## Databases
+| DB | IP | DB name | Login | Password |
+| --- | --- | --- | --- | --- | 
+| PostgreSQL | localhost:15432 | dwdb | manager | ranger |
+| MySQL | localhost:13306 | dwdb | root | root |
