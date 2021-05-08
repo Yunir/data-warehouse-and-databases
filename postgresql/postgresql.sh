@@ -1,14 +1,10 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+set -euxo pipefail
 
-# Edit the following to change the name of the database user that will be created:
 APP_DB_USER=manager
 APP_DB_PASS=ranger
-
-# Edit the following to change the name of the database that is created (defaults to the user name)
-APP_DB_NAME=shop
-
-# Edit the following to change the version of PostgreSQL that is installed
-PG_VERSION=9.6
+APP_DB_NAME=dwdb
+PG_VERSION=13
 
 ###########################################################
 # Changes below this line are probably not necessary
@@ -49,13 +45,13 @@ then
   exit
 fi
 
+# Install and prepare PostgreSQL
+
 PG_REPO_APT_SOURCE=/etc/apt/sources.list.d/pgdg.list
 if [ ! -f "$PG_REPO_APT_SOURCE" ]
 then
-  # Add PG apt repo:
-  echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > "$PG_REPO_APT_SOURCE"
-
-  # Add PGDG repo key:
+  # Add PG apt repo and PGDG repo key
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" > "$PG_REPO_APT_SOURCE"
   wget --quiet -O - https://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add -
 fi
 
@@ -93,28 +89,8 @@ CREATE DATABASE $APP_DB_NAME WITH OWNER=$APP_DB_USER
                                   TEMPLATE=template0;
 EOF
 
-cat << EOF | PGUSER=$APP_DB_USER PGPASSWORD=$APP_DB_PASS psql -h localhost $APP_DB_NAME
-CREATE TABLE "customers" (
-  id bigserial PRIMARY KEY,
-  name character varying(200),
-  surname character varying(200),
-  email character varying(200),
-  phone character varying(50),
-  age integer
-);
-
-INSERT INTO customers(name, surname, email, phone, age) values ('Петр', 'Петров', 'Петр@яндекс.ру', '+79991234455', 25);
-INSERT INTO customers(name, surname, email, phone, age) values ('Владимир', 'Иванов', 'Владимир@яндекс.ру', '+79991234455', 26);
-INSERT INTO customers(name, surname, email, phone, age) values ('Иван', 'Иванов', 'Иван@яндекс.ру', '+79991234455', 27);
-INSERT INTO customers(name, surname, email, phone, age) values ('Иммануил', 'Кант', 'Иммануил@яндекс.ру', '+79991234455', 28);
-INSERT INTO customers(name, surname, email, phone, age) values ('Джордж', 'Клуни', 'Джордж@яндекс.ру', '+79991234455', 29);
-INSERT INTO customers(name, surname, email, phone, age) values ('Билл', 'Рубцов', 'Билл@яндекс.ру', '+79991234455', 30);
-INSERT INTO customers(name, surname, email, phone, age) values ('Марк', 'Марков', 'Марк@яндекс.ру', '+79991234455', 31);
-INSERT INTO customers(name, surname, email, phone, age) values ('Галина', 'Матвеева', 'Галина@яндекс.ру', '+79991234455', 32);
-INSERT INTO customers(name, surname, email, phone, age) values ('Святослав', 'Павлов', 'Святослав@яндекс.ру', '+79991234455', 33);
-INSERT INTO customers(name, surname, email, phone, age) values ('Ольга', 'Бергольц', 'Ольга@яндекс.ру', '+79991234455', 34);
-INSERT INTO customers(name, surname, email, phone, age) values ('Лев', 'Рабинович', 'Лев@яндекс.ру', '+79991234455', 35);
-EOF
+PGUSER=$APP_DB_USER PGPASSWORD=$APP_DB_PASS psql -h localhost $APP_DB_NAME -f /vagrant/postgresql_tables_create.sql
+PGUSER=$APP_DB_USER PGPASSWORD=$APP_DB_PASS psql -h localhost $APP_DB_NAME -f /vagrant/postgresql_tables_insert.sql
 
 # Tag the provision time:
 date > "$PROVISIONED_ON"
