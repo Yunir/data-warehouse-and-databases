@@ -1,0 +1,1 @@
+Execute `work_with_db.sh` commands by yourself. 
