@@ -1,4 +1,4 @@
-# PostgreSQL
+# MongoDB
 
 ## How to run
 Run command to start the Database inside VM:

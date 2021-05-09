@@ -1,1 +1,7 @@
-Execute `work_with_db.sh` commands by yourself. 
+# OracleDB
+
+## How to run
+Run command to start the Database inside VM:
+```shell
+$ ./bootstrap.sh
+```
