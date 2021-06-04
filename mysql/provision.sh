@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euxo pipefail
 
 echo "Installing Dependencies..."
 export DEBIAN_FRONTEND="noninteractive";
@@ -7,6 +8,7 @@ sudo apt-get install -y debconf-utils vim curl
 sudo debconf-set-selections <<< 'mysql-apt-config mysql-apt-config/select-server select mysql-8.0'
 wget https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
 sudo -E dpkg -i mysql-apt-config_0.8.10-1_all.deb
+sudo apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
 sudo apt-get update
 
 # Install MySQL 8
