@@ -1,22 +1,7 @@
-import psycopg2
-import cx_Oracle
+from merge.connections import Connections
 
 
-class PostgresToOracle:
-
-    def __init__(self):
-        self.postgres = psycopg2.connect(
-            dbname='dwdb',
-            user='manager',
-            password='ranger',
-            host='localhost',
-            port=15432,
-        )
-        cx_Oracle.init_oracle_client(
-            lib_dir='/Users/andrey.zavodov/Desktop/instantclient_19_8'
-        )
-        self.oracle = cx_Oracle.connect(u'SYSTEM/ranger@localhost:1521/XE')
-        self.oracle.autocommit = True
+class PostgresToOracle(Connections):
 
     def merge(self):
         self.merge_discipline()

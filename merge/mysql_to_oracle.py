@@ -1,24 +1,7 @@
-import pymysql
-from pymysql.cursors import DictCursor
-import cx_Oracle
+from merge.connections import Connections
 
 
-class MysqlToOracle:
-
-    def __init__(self):
-        self.mysql = pymysql.connect(
-            host='localhost',
-            port=13306,
-            user='root',
-            password='root',
-            db='dwdb',
-            cursorclass=DictCursor
-        )
-        cx_Oracle.init_oracle_client(
-            lib_dir='/Users/andrey.zavodov/Desktop/instantclient_19_8'
-        )
-        self.oracle = cx_Oracle.connect(u'SYSTEM/ranger@localhost:1521/XE')
-        self.oracle.autocommit = True
+class MysqlToOracle(Connections):
 
     def merge(self):
         self.merge_conference()

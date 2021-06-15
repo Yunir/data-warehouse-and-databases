@@ -8,6 +8,8 @@ from pymysql.cursors import DictCursor
 
 from pymongo import MongoClient
 
+from merge.connections import ORACLE_LIB_DIR
+
 with closing(psycopg2.connect(
         dbname='dwdb',
         user='manager',
@@ -21,7 +23,7 @@ with closing(psycopg2.connect(
             print(row)
 
 
-cx_Oracle.init_oracle_client(lib_dir='/Users/andrey.zavodov/Desktop/instantclient_19_8')
+cx_Oracle.init_oracle_client(lib_dir=ORACLE_LIB_DIR)
 conn_str = u'SYSTEM/ranger@localhost:1521/XE'
 conn = cx_Oracle.connect(conn_str)
 c = conn.cursor()

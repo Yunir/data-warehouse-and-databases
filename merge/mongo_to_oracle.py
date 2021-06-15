@@ -1,16 +1,7 @@
-from pymongo import MongoClient
-import cx_Oracle
+from merge.connections import Connections
 
 
-class MongoToOracle:
-
-    def __init__(self):
-        self.mongo = MongoClient('mongodb://manager:ranger@localhost:27017/dwdb')
-        cx_Oracle.init_oracle_client(
-            lib_dir='/Users/andrey.zavodov/Desktop/instantclient_19_8'
-        )
-        self.oracle = cx_Oracle.connect(u'SYSTEM/ranger@localhost:1521/XE')
-        self.oracle.autocommit = True
+class MongoToOracle(Connections):
 
     def merge(self):
         self.merge_hostel()
@@ -26,6 +17,12 @@ class MongoToOracle:
             """)
         except Exception:
             pass
+        for student in self.mongo.dwdb.student.find():
+            self.oracle.cursor().execute(f"""
+                update student SET
+                has_benefits = '{student['has_benefits']}'
+                where id_student = {student['employee_id']}
+            """)
 
     def merge_hostel(self):
         try:
