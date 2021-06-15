@@ -13,11 +13,6 @@ class MysqlToOracle(Connections):
         self.merge_employee_publication()
         self.merge_employee_science_project()
 
-    def format_date(self, field):
-        if field is None:
-            return "to_date(null, 'yyyy/mm/dd')"
-        return f"to_date('{field.strftime('%Y/%m/%d')}', 'yyyy/mm/dd')"
-
     def merge_conference(self):
         try:
             self.oracle.cursor().execute("""

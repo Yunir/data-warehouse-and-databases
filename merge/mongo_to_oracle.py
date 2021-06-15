@@ -36,6 +36,18 @@ class MongoToOracle(Connections):
             """)
         except Exception:
             pass
+        for hostel in self.mongo.dwdb.hostel.find():
+            try:
+                self.oracle.cursor().execute(f"""
+                    INSERT INTO HOSTEL VALUES (
+                        {hostel['_id']},
+                        '{hostel['hostel_location']}',
+                        {hostel['rooms_number']},
+                        '{hostel['has_claws']}'
+                    )
+                """)
+            except Exception:
+                pass
 
     def merge_room(self):
         try:
@@ -52,6 +64,21 @@ class MongoToOracle(Connections):
             """)
         except Exception:
             pass
+        for room in self.mongo.dwdb.room.find():
+            try:
+                self.oracle.cursor().execute(f"""
+                    INSERT INTO ROOM VALUES (
+                        {room['_id']},
+                        {room['hostel_id']},
+                        {room['payment_amount']},
+                        {room['room_number']},
+                        {room['room_capacity']},
+                        {room['livers_number']},
+                        {self.format_date(room['disinfection_date'])}
+                    )
+                """)
+            except Exception:
+                pass
 
     def merge_tenant(self):
         try:
@@ -69,6 +96,19 @@ class MongoToOracle(Connections):
             """)
         except Exception:
             pass
-
-mg = MongoToOracle()
-mg.merge()
+        for tenant in self.mongo.dwdb.tenant.find():
+            try:
+                self.oracle.cursor().execute(f"""
+                    INSERT INTO TENANT VALUES (
+                        {tenant['_id']},
+                        {tenant['student_id']},
+                        {tenant['room_id']},
+                        {self.format_date(tenant['visit_period_entered'])},
+                        {self.format_date(tenant['visit_period_left'])},
+                        {tenant['warnings_count']},
+                        {self.format_date(tenant['arrival_date'])},
+                        {self.format_date(tenant['check_out_date'])}
+                    )
+                """)
+            except Exception:
+                pass

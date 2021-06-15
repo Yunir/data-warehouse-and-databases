@@ -49,3 +49,8 @@ class Connections:
             host='localhost',
             port=15432,
         )
+
+    def format_date(self, field):
+        if field is None:
+            return "to_date(null, 'yyyy/mm/dd')"
+        return f"to_date('{field.strftime('%Y/%m/%d')}', 'yyyy/mm/dd')"
