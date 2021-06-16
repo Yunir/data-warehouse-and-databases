@@ -17,13 +17,13 @@ class MysqlToOracle(Connections):
         try:
             self.oracle.cursor().execute("""
                 CREATE TABLE CONFERENCE(
-                   ID_conference NUMBER(5) PRIMARY KEY CHECK(ID_conference>=0),
-                   conference_name VARCHAR2(200),
-                   edition_location VARCHAR2(100),
-                   conference_date DATE
+                    ID_conference NUMBER(5) PRIMARY KEY CHECK(ID_conference>=0),
+                    conference_name VARCHAR2(2000),
+                    edition_location VARCHAR2(1000),
+                    conference_date DATE
                 )
             """)
-        except Exception:
+        except Exception as e:
             pass
         mysql_cursor = self.mysql.cursor()
         mysql_cursor.execute('select * from CONFERENCE')
@@ -58,9 +58,8 @@ class MysqlToOracle(Connections):
         mysql_cursor.execute('select * from LIBRARY_CARD')
         for row in mysql_cursor:
             try:
-                # TODO - проблема с NULL датами. нужно поправить...
                 self.oracle.cursor().execute(f"""
-                    INSERT INTO CONFERENCE VALUES (
+                    INSERT INTO LIBRARY_CARD VALUES (
                         {row['ID_library_card']}, 
                         {row['reader']},
                         '{row['book_name']}',
@@ -69,7 +68,7 @@ class MysqlToOracle(Connections):
                         '{row['status_book']}'
                     )
                 """)
-            except Exception:
+            except Exception as e:
                 pass
 
     def merge_pub_edition(self):
